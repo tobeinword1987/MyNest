@@ -6,8 +6,5 @@ export const Module = (metaData: { controllers?: any[]; providers?: any[] }) => 
         const module = Reflect.getMetadata('myNest-module', target);
         const controllers = Reflect.getMetadata('myNest-controllers', target);
         const providers = Reflect.getMetadata('myNest-providers', target);
-        console.log(module);
-        console.log(controllers);
-        console.log(providers);
     }
 }

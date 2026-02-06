@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Controller, Get, Post } from "../my_nest/decorators/index.ts";
+import { Body, Controller, Get, Post, Put, Delete, Query } from "../my_nest/decorators/index.ts";
 import { StudentsService } from './students.service.ts'
 
 @Controller('/students')
@@ -9,21 +9,45 @@ export class StudentsController {
         this.svc = service;
     }
 
-
     @Get('/')
-    list(req: Request, res: Response) {
-        res.send(this.svc.findAll());
+    list() {
+        return this.svc.findAll();
+    }
+
+    @Get('/homeworks')
+    findSubjects(@Query() query: { subject: string }) {
+        return this.svc.findSubjects(query);
+    }
+
+    @Get('/homeworks1')
+    getReportBySubject(@Query('subject') subject: string) {
+        return this.svc.getReportBySubject(subject);
+    }
+
+    @Get('/:id/name/:name')
+    showStudent(id: string, name: string) {
+        return this.svc.showStudent(id, name);
     }
 
     @Post('/')
-    create(req: Request, res: Response) {
-        res.send(this.svc.create());
+    create(@Body() studentData: { name: string }): string {
+        return this.svc.create(studentData);
     }
 
-    //   @Get('/:id')
-    //   one(@Param('id') id:string) {
-    //     return this.svc.findOne(+id);
-    //   }
+    @Post('/:name')
+    addScholarship(@Body('scholarship') scholarship: number, name: string): string {
+        return this.svc.addScholarship(scholarship, name);
+    }
+
+    @Put('/')
+    update() {
+        return this.svc.update();
+    }
+
+    @Delete('/:id')
+    delete(id: string) {
+        return this.svc.delete(id);
+    }
 
     //   @Post('/')
     //   @UsePipes(ZodValidationPipe)

@@ -4,7 +4,7 @@ class RegistrationSvc {
 
     public createInstance(member: any, token?: any) {
         if (this.singleton.has(member)) {
-            console.log(`Instance with ${member.name} is already created`)
+            console.log(`Instance with ${member.name} was already created`)
         } else {
             console.log(`Instance with ${member.name} was created now`)
             this.singleton.set(member, new member());
@@ -22,18 +22,6 @@ class RegistrationSvc {
             console.log(`Instance ${member.name} was already created!`)
         }
         return this.singleton.get(member);
-    }
-
-    public getInstanceByToken(token: any) {
-        if(this.tokenMap.has(token)) {
-            const member  = this.tokenMap.get(token);
-            if (!this.singleton.has(member)) {
-            this.createInstance(member)
-        }
-            console.log(`Instance ${member.name} was already created!`)
-            return this.singleton.get(member);
-        }
-        throw new Error (`There is no token ${token}`)
     }
 }
 

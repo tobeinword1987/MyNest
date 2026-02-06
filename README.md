@@ -14,3 +14,5 @@
  - @Delete() @Delete(params)
  - @Body() @Body(params)
  - @Query() @Query(params)
+
+ 4) Start server: npm start 

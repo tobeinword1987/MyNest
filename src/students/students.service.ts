@@ -1,5 +1,6 @@
 import { Injectable } from '../../my_nest/decorators/injectable.ts'
 import { HttpException, HttpStatus } from '../../my_nest/http.exception.ts';
+import { StudentDto } from '../../schemas/schema.ts';
 import { students } from './students.dto.ts'
 
 @Injectable()

@@ -8,5 +8,6 @@ import { Post } from './post.ts';
 import { Put } from './put.ts';
 import { Delete } from './delete.ts';
 import { Query } from './query.ts';
+import { UsePipes } from './usePipes.ts';
 
-export { Body, Controller, Get, Injectable, Module, Param, Post, Put, Delete, Query }
+export { Body, Controller, Get, Injectable, Module, Param, Post, Put, Delete, Query, UsePipes }

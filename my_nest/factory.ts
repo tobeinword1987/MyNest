@@ -70,7 +70,7 @@ export const Factory = (modules: Array<any>) => {
                     const routes = Reflect.getMetadata('myNest-routes', controllers[j]);
                     routes.forEach(route => {
                         const fullRoute = baseRoute + route.route;
-                        addRoute(route.method, fullRoute, route.func.bind(contr), route.func, controllers[j]);
+                        addRoute(route.method, fullRoute, route.func.bind(contr), route.func, controllers[j], app);
                     });
                 }
             }

@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import { Body, Controller, Get, Param, Post, Put, Delete, Query } from "../../my_nest/decorators/index.ts";
+import { Body, Controller, Get, Param, Post, Put, Delete, Query, UsePipes } from "../../my_nest/decorators/index.ts";
 import { StudentsService } from './students.service.ts'
 import { ZodValidationPipe } from "../../pipes/zodValidationPipe.ts";
-import { UsePipes } from "@nestjs/common";
+import { createStudentSchema, StudentDto } from "../../schemas/schema.ts";
 
 @Controller('/students')
+@UsePipes(new ZodValidationPipe(createStudentSchema))
 export class StudentsController {
     svc: StudentsService;
     constructor(public service: StudentsService) {
@@ -44,13 +44,11 @@ export class StudentsController {
 
     @Post('/name/:name')
     addScholarship(@Body('scholarship') scholarship: number, @Param('name') name: string): string {
-        console.log('**********');
         return this.svc.addScholarship(scholarship, name);
     }
 
     @Post('/name1/:name')
-    addScholarship1(@Body('scholarship') scholarship: number, @Param() studentName: { name: string }): string {
-        console.log('**********');
+    addScholarship1(@Body('scholarship') scholarship: number, @Param() studentName: StudentDto): string {
         return this.svc.addScholarship(scholarship, studentName.name);
     }
 
@@ -59,9 +57,9 @@ export class StudentsController {
         return this.svc.delete(id);
     }
 
-      @Post('/add')
-      @UsePipes(ZodValidationPipe)
-      add(@Body() studentData: { name: string }) {
-        return this.svc.create(studentData);
-      }
+    @Post('/add')
+    @UsePipes(new ZodValidationPipe(createStudentSchema))
+    add(@Body() studentData: { name: string }) {
+    return this.svc.create(studentData);
+    }
 }

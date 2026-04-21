@@ -6,4 +6,4 @@ export const createStudentSchema = z
   })
   .required();
 
-export type CreateCatDto = z.infer<typeof createStudentSchema>;
+export type StudentDto = z.infer<typeof createStudentSchema>;

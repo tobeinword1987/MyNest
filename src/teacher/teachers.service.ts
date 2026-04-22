@@ -1,6 +1,6 @@
-import { Injectable } from '../my_nest/decorators/injectable.ts'
+import { Injectable } from '../../my_nest/decorators/injectable.ts'
 
-// @Injectable()
+@Injectable()
 export class TeachersService {
     findAll () {
         return 'There is a list of all teachers';

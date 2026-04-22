@@ -41,15 +41,19 @@ export const addRoute = (method: string, path: string, fnct: Function, f, instan
         (req, res, next) => {
             const pipeMetadataMethod = Reflect.getMetadata('PIPE_METADATA', f);
             const pipeMetadataController = Reflect.getMetadata('PIPE_METADATA_CONTROLLER', instance)
-            console.log('-------pipeMetadataController------', pipeMetadataController);
-            console.log('-------pipeMetadataMethod------', pipeMetadataMethod);
+            const pipeMetadataGlobal = Reflect.getMetadata('PIPE_METADATA_GLOBAL', app)
+            // console.log('-------pipeMetadataController------', pipeMetadataController);
+            // console.log('-------pipeMetadataMethod------', pipeMetadataMethod);
+            // console.log('-------pipeMetadataGlobal------', pipeMetadataGlobal);
 
+            if (pipeMetadataGlobal) {
+                checkPipesValidation(req, f, instance, pipeMetadataGlobal);
+            }
             if (pipeMetadataController) {
-                console.log('~~~~~~~~~pipeMetadataController condition')
-                checkPipesValidationOnMethod(req, f, instance, pipeMetadataController);
+                checkPipesValidation(req, f, instance, pipeMetadataController);
             }
             if (pipeMetadataMethod) {
-                checkPipesValidationOnMethod(req, f, instance, pipeMetadataMethod);
+                checkPipesValidation(req, f, instance, pipeMetadataMethod);
             }
 
             next();
@@ -58,7 +62,7 @@ export const addRoute = (method: string, path: string, fnct: Function, f, instan
     );
 }
 
-export const checkPipesValidationOnMethod = (req: Request, f: Function, instance, pipeMetadata) => {
+export const checkPipesValidation = (req: Request, f: Function, instance, pipeMetadata) => {
     const parameters = Reflect.getMetadata('mini:params', instance);
     console.log(parameters);
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import { addRoute, routes } from './routes.ts'
 import { registrationSvc } from './registration.service.ts'
+import { PipeTransform } from './decorators/usePipes.ts';
 
 export const Factory = (modules: Array<any>) => {
     const app = express();
@@ -81,7 +82,12 @@ export const Factory = (modules: Array<any>) => {
         app.listen(port, callback)
     }
 
+    const useGlobalPipes = (pipeClass: PipeTransform) => {
+        Reflect.defineMetadata('PIPE_METADATA_GLOBAL', pipeClass, app)
+    }
+
     return {
-        listen
+        listen,
+        useGlobalPipes
     };
 }

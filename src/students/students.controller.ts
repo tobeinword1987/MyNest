@@ -2,9 +2,10 @@ import { Body, Controller, Get, Param, Post, Put, Delete, Query, UsePipes } from
 import { StudentsService } from './students.service.ts'
 import { ZodValidationPipe } from "../../pipes/zodValidationPipe.ts";
 import { createStudentSchema, StudentDto } from "../../schemas/schema.ts";
+import { getStudentSchema } from "../../schemas/schema1.ts";
 
 @Controller('/students')
-@UsePipes(new ZodValidationPipe(createStudentSchema))
+// @UsePipes(new ZodValidationPipe(createStudentSchema))
 export class StudentsController {
     svc: StudentsService;
     constructor(public service: StudentsService) {
@@ -48,7 +49,7 @@ export class StudentsController {
     }
 
     @Post('/name1/:name')
-    addScholarship1(@Body('scholarship') scholarship: number, @Param() studentName: StudentDto): string {
+    addScholarship1(@Body('scholarship', new ZodValidationPipe(getStudentSchema)) scholarship: number, @Param() studentName: StudentDto): string {
         return this.svc.addScholarship(scholarship, studentName.name);
     }
 

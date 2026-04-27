@@ -8,7 +8,7 @@ import { ZodValidationPipe } from "./pipes/zodValidationPipe.ts";
 
 const app = Factory([StudentsModule, TeachersModule, SubjectsModule]);
 
-app.useGlobalPipes(new ZodValidationPipe(createStudentSchema));
+// app.useGlobalPipes(new ZodValidationPipe(createStudentSchema));
 
 const port = 8000;
 

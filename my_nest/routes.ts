@@ -4,7 +4,9 @@ export const routes = Router();
 
 const getParamsOnMethod = (instance, f, req) => {
     const params = [];
+    const pipes = new Map();
     const parameters = Reflect.getMetadata('mini:params', instance);
+    console.log('******', parameters);
     parameters?.forEach(parameter => {
         if ((parameter.name === f.name) && (parameter.type === 'param')) {
             if (parameter.param) {
@@ -29,9 +31,13 @@ const getParamsOnMethod = (instance, f, req) => {
                 params[parameter.index] = req.query;
             }
         }
+        if (parameter.pipe) {
+            Reflect.defineMetadata('PIPE_METADATA_PARAM', parameter.pipe, parameter)
+            pipes.set(parameter.index, parameter.pipe);
+        }
     })
     console.log('))))))', params);
-    return params;
+    return { params, pipes };
 }
 
 export const addRoute = (method: string, path: string, fnct: Function, f, instance, app) => {
@@ -42,9 +48,6 @@ export const addRoute = (method: string, path: string, fnct: Function, f, instan
             const pipeMetadataMethod = Reflect.getMetadata('PIPE_METADATA', f);
             const pipeMetadataController = Reflect.getMetadata('PIPE_METADATA_CONTROLLER', instance)
             const pipeMetadataGlobal = Reflect.getMetadata('PIPE_METADATA_GLOBAL', app)
-            // console.log('-------pipeMetadataController------', pipeMetadataController);
-            // console.log('-------pipeMetadataMethod------', pipeMetadataMethod);
-            // console.log('-------pipeMetadataGlobal------', pipeMetadataGlobal);
 
             if (pipeMetadataGlobal) {
                 checkPipesValidation(req, f, instance, pipeMetadataGlobal);
@@ -55,6 +58,7 @@ export const addRoute = (method: string, path: string, fnct: Function, f, instan
             if (pipeMetadataMethod) {
                 checkPipesValidation(req, f, instance, pipeMetadataMethod);
             }
+            checkPipesValidationParamsOnMethod(req, f, instance);
 
             next();
         },
@@ -66,7 +70,7 @@ export const checkPipesValidation = (req: Request, f: Function, instance, pipeMe
     const parameters = Reflect.getMetadata('mini:params', instance);
     console.log(parameters);
 
-    const params = getParamsOnMethod(instance, f, req);
+    const { params } = getParamsOnMethod(instance, f, req);
 
     params.forEach(param => {
         try {
@@ -77,10 +81,28 @@ export const checkPipesValidation = (req: Request, f: Function, instance, pipeMe
     });
 }
 
+export const checkPipesValidationParamsOnMethod = (req: Request, f: Function, instance) => {
+    const parameters = Reflect.getMetadata('mini:params', instance);
+    console.log(parameters);
+
+    const { params, pipes } = getParamsOnMethod(instance, f, req);
+
+    parameters.forEach(parameter => {
+        try {
+            const pipeOnParam = Reflect.getMetadata('PIPE_METADATA_PARAM', parameter);
+            console.log(parameter, params[parameter.index]);
+            if (pipeOnParam && f.name === parameter.name) {
+                pipeOnParam.transform(params[parameter.index])
+            }
+        } catch (error) {
+            throw new HttpException(`Wrong type, ${JSON.stringify(params[parameter.index])}`, HttpStatus.BAD_REQUEST);
+        }
+    })
+}
+
 export const asyncHandler = (fn: Function, f, instance) => (req: Request, res: Response) => {
     try {
-        const params = getParamsOnMethod(instance, f, req);
-        console.log('call---------------')
+        const { params } = getParamsOnMethod(instance, f, req);
         res.send(fn(...params));
     } catch (error) {
         console.log(error);
